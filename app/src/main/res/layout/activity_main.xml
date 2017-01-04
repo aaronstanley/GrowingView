@@ -4,26 +4,30 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F00"
+    android:background="#000"
     tools:context="com.nutty.growingview.MainActivity">
 
-
-    <Button
+    <TextView
         android:id="@+id/button"
-        android:layout_width="32dp"
+        android:layout_width="100dp"
         android:layout_height="32dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="156dp"
-        android:layout_marginTop="300dp"
+        android:layout_marginLeft="56dp"
+        android:layout_marginTop="100dp"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:text="@string/press_me"
         android:background="#fff" />
-
 
     <com.nutty.growingview.GrowingView
         android:id="@+id/opening_view"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="156dp"
-        android:layout_marginTop="300dp"
-        android:background="#00F" />
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:layout_alignStart="@+id/button"
+        android:layout_alignLeft="@+id/button"
+        android:layout_alignTop="@+id/button"
+        android:background="#00F"
+        android:visibility="invisible"/>
+
+
+
 </RelativeLayout>

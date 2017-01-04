@@ -1,21 +1,23 @@
 package com.nutty.growingview;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 /**
  * GrowingView
- * View to be used in the Edit profile Screen
  * Created by aaron on 30/12/2016.
  */
 
-public class GrowingView extends View {
-    Animation.AnimationListener listener;
+public class GrowingView extends FrameLayout {
+    GrowingViewListener listener;
     boolean hasGrown = false;
     boolean isAnimating = false;
     int startX, startY, startWidth, startHeight, duration;
@@ -47,9 +49,9 @@ public class GrowingView extends View {
      * @param duration Duration time in MS
      * @param listener Animation Listener
      */
-    public void startGrowAnimation(int left, int top, int right, int bottom, int duration, Animation.AnimationListener listener) {
+    public void startGrowAnimation(int left, int top, int right, int bottom, int duration, GrowingViewListener listener) {
 
-        if(!hasGrown && !isAnimating) {
+        if (!hasGrown && !isAnimating) {
             this.listener = listener;
             this.startX = (int) getX();
             this.startY = (int) getY();
@@ -66,7 +68,16 @@ public class GrowingView extends View {
      * Returns view to it's starting position
      */
     public void startShrinkAnimation() {
-        if(hasGrown && !isAnimating) {
+        startShrinkAnimation(null);
+    }
+
+    /**
+     * Returns view to it's starting position
+     */
+    public void startShrinkAnimation(GrowingViewListener listener) {
+
+        if (hasGrown && !isAnimating) {
+            this.listener = listener;
             startAnimation(new ResizeMoveAnimation(AnimationType.SHRINK,
                     startX, startY, startWidth, startHeight, duration));
         }
@@ -75,6 +86,16 @@ public class GrowingView extends View {
     enum AnimationType {
         GROW,
         SHRINK
+    }
+
+    public interface GrowingViewListener {
+        void growingStarted();
+
+        void growingFinished();
+
+        void shrinkStarted();
+
+        void shrinkFinished();
     }
 
     class ResizeMoveAnimation extends Animation {
@@ -91,7 +112,7 @@ public class GrowingView extends View {
                 setX(currentLeft);
                 setY(currentTop);
 
-                if(!isAnimating) {
+                if (!isAnimating) {
                     removeOnLayoutChangeListener(this);
                 }
 
@@ -103,7 +124,14 @@ public class GrowingView extends View {
             public void onAnimationStart(Animation animation) {
                 isAnimating = true;
                 if (listener != null) {
-                    listener.onAnimationStart(animation);
+                    switch (type) {
+                        case GROW:
+                            listener.growingStarted();
+                            break;
+                        case SHRINK:
+                            listener.shrinkStarted();
+                            break;
+                    }
                 }
             }
 
@@ -114,15 +142,19 @@ public class GrowingView extends View {
 
                 setAnimationListener(null);
                 if (listener != null) {
-                    listener.onAnimationEnd(animation);
+                    switch (type) {
+                        case GROW:
+                            listener.growingFinished();
+                            break;
+                        case SHRINK:
+                            listener.shrinkFinished();
+                            break;
+                    }
                 }
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                if (listener != null) {
-                    listener.onAnimationRepeat(animation);
-                }
             }
         };
 
@@ -154,6 +186,26 @@ public class GrowingView extends View {
                     break;
             }
 
+            //remove margins as this affects the view growth
+            if (getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) getLayoutParams();
+                p.setMargins(0, 0, 0, 0);
+            }
+
+            //Remove Alignment rules as they affect margins
+            if(getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+                RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) getLayoutParams();
+                p.addRule(RelativeLayout.ALIGN_LEFT,0);
+                p.addRule(RelativeLayout.ALIGN_RIGHT,0);
+                p.addRule(RelativeLayout.ALIGN_TOP,0);
+                p.addRule(RelativeLayout.ALIGN_BOTTOM,0);
+
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    p.addRule(RelativeLayout.ALIGN_START,0);
+                    p.addRule(RelativeLayout.ALIGN_END,0);
+                }
+            }
+
             setDuration(duration);
             addOnLayoutChangeListener(onLayoutChangeListener);
             setAnimationListener(animationListener);
@@ -180,12 +232,6 @@ public class GrowingView extends View {
             } else {
                 //height = current height below the starting point plus height above (negative value)
                 getLayoutParams().height = currentBottom + ((toTop - fromTop) + v);
-            }
-
-            //remove margins as this affects the view growth
-            if (getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
-                ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) getLayoutParams();
-                p.setMargins(0, 0, 0, 0);
             }
 
             //ask for refresh - calls OnLayoutChangeListener
