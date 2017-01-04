@@ -3,7 +3,6 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url "http://dl.bintray.com/pixplicity/android" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
