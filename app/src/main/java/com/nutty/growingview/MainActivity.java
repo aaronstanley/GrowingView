@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d("this","clicked");
 
-                launchView.setX(button.getX() + (button.getWidth() / 2));
-                launchView.setY(button.getY() + (button.getHeight() / 2));
+                //launchView.setX(button.getX() + (button.getWidth() / 2));
+                //launchView.setY(button.getY() + (button.getHeight() / 2));
 
                 launchView.startGrowAnimation(32, 32 ,thisView.getWidth() - 32 ,thisView.getHeight() -32 , 500);
             }

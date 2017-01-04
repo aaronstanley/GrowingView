@@ -12,9 +12,9 @@
         android:id="@+id/button"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="56dp"
-        android:layout_marginBottom="72dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="156dp"
+        android:layout_marginTop="300dp"
         android:background="#fff" />
 
 
@@ -22,5 +22,8 @@
         android:id="@+id/opening_view"
         android:layout_width="10dp"
         android:layout_height="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="156dp"
+        android:layout_marginTop="300dp"
         android:background="#00F" />
 </RelativeLayout>
